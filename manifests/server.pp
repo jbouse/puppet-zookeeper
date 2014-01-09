@@ -49,9 +49,9 @@ class zookeeper::server (
     require => Package['zookeeper-server'],
   }
 
-  if defined($ensemble) {
+  if is_array($ensemble) and member($ensemble, $::clientcert) {
     file { "${data_dir}/myid":
-      content => inline_template('<%= ensemble.index(certname).to_i.to_s %>'),
+      content => inline_template('<%= ensemble.index(clientcert).to_i.to_s %>'),
       require => Package['zookeeper-server'],
     }
   }
