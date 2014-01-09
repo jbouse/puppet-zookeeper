@@ -4,27 +4,21 @@
 #
 # === Parameters
 #
-# Document parameters here.
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
+# [*ensemble*]
+# [*data_dir*]
+# [*client_port*]
+# [*leader_port*]
+# [*election_port*]
 #
 # === Variables
 #
-# Here you should define a list of variables that this module would require.
-#
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
+# [*certname*]
+#   Puppet agent certificate name used to identify host in ensemble listing
 #
 # === Examples
 #
 #  class { 'zookeeper::server':
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
+#    ensemble => [ 'zk1.example.com', 'zk2.example.com', 'zk3.example.com' ],
 #  }
 #
 # === Authors
@@ -35,9 +29,30 @@
 #
 # Copyright 2014 UnderGrid Network Services
 #
-class zookeeper::server {
+class zookeeper::server (
+  $ensemble      = $::zookeeper::params::ensemble,
+  $data_dir      = $::zookeeper::params::data_dir,
+  $client_port   = $::zookeeper::params::client_port,
+  $leader_port   = $::zookeeper::params::leader_port,
+  $election_port = $::zookeeper::params::election_port,
+) inherits zookeeper::params {
+
+  require zookeeper
+
   package { 'zookeeper-server':
     ensure  => installed,
     require => Package['java']
+  }
+
+  file { '/etc/zookeeper/conf/zoo.cfg':
+    content => template('zookeeper/zoo.cfg.erb'),
+    require => Package['zookeeper-server'],
+  }
+
+  if defined($ensemble) {
+    file { "${data_dir}/myid":
+      content => inline_template('<%= ensemble.index(certname).to_i.to_s %>'),
+      require => Package['zookeeper-server'],
+    }
   }
 }
