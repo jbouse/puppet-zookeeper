@@ -75,6 +75,9 @@ class zookeeper::server (
 
   if is_array($ensemble) and member($ensemble, $::clientcert) {
     file { "${data_dir}/myid":
+      mode    => '0640',
+      owner   => 'zookeeper',
+      group   => 'zookeeper',
       content => inline_template('<%= @ensemble.index(clientcert).to_i.to_s %>'),
       require => Package['zookeeper-server'],
       notify  => Service['zookeeper-server'],
