@@ -52,8 +52,6 @@ class zookeeper::server (
   $election_port = $::zookeeper::params::election_port,
 ) inherits zookeeper::params {
 
-  require zookeeper
-
   package { 'zookeeper-server':
     ensure  => installed,
     require => Package['java']
