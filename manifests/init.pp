@@ -12,7 +12,7 @@
 #
 # === Copyright
 #
-# Copyright 2014 UnderGrid Network Services
+# Copyright 2014 Cox Media Group
 #
 class zookeeper {
   package { 'zookeeper':

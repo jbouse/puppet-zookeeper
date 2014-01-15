@@ -18,7 +18,7 @@
 #
 # === Copyright
 #
-# Copyright 2014 UnderGrid Network Services
+# Copyright 2014 Cox Media Group
 #
 class zookeeper::repo (
   $release = '0.7.0'
